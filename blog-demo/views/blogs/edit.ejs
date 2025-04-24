@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Blog</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <a class="navbar-brand" href="#">Blog Manager</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link" href="/blogs">Manage Blogs</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/categories">Manage Categories</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/blogs/new">Create New Blog</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/categories/new">Create New Category</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/vehicles">List Vehicles</a></li> <!-- Added this line -->
+                </ul>
+            </div>
+            
+        </nav>
+    </header>
+
+    <div class="container mt-5">
+        <h1 class="mb-4">Edit Blog</h1>
+        <form action="/blogs/<%= blog._id %>?_method=PUT" method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="title">Title:</label>
+                <input type="text" class="form-control" name="title" id="title" value="<%= blog.title %>" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="description">Description:</label>
+                <textarea class="form-control" name="description" id="description" required><%= blog.description %></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="price">Price:</label>
+                <input type="number" class="form-control" name="price" id="price" value="<%= blog.price %>" required>
+            </div>
+
+            
+
+            <div class="form-group">
+                <label for="categories">Categories:</label>
+                <select class="form-control" name="categories" id="categories" multiple required>
+                    <% categories.forEach(cat => { %>
+                        <option value="<%= cat._id %>" <%= blog.categories.includes(cat._id.toString()) ? 'selected' : '' %>><%= cat.name %></option>
+                    <% }) %>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="featuredImage">Featured Image:</label>
+                <% if (blog.featuredImage) { %>
+                    <div class="mb-3">
+                        <img src="/uploads/<%= blog.featuredImage %>" alt="Featured Image" class="img-thumbnail" width="100">
+                    </div>
+                <% } %>
+                <input type="file" class="form-control-file" name="featuredImage" id="featuredImage">
+            </div>
+
+            <div class="form-group">
+                <label for="additionalImages">Additional Images:</label>
+                <% if (blog.additionalImages && blog.additionalImages.length > 0) { %>
+                    <div class="mb-3">
+                        <% blog.additionalImages.forEach((image, index) => { %>
+                            <div class="mb-2">
+                                <img src="/uploads/<%= image %>" alt="Additional Image <%= index + 1 %>" class="img-thumbnail" width="100">
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" name="removeImages" value="<%= image %>">
+                                    <label class="form-check-label">Remove</label>
+                                </div>
+                            </div>
+                        <% }) %>
+                    </div>
+                <% } %>
+                <input type="file" class="form-control-file" name="additionalImages" id="additionalImages" multiple>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Update Blog</button>
+            <a href="/blogs" class="btn btn-secondary ml-2">Back to Blogs</a>
+        </form>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

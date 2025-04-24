@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>List Vehicle</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        .sidebar {
+            width: 25%;
+            float: left;
+            margin-top: 2rem;
+        }
+        .posts-container {
+            width: 75%;
+            float: right;
+            margin-top: 2rem;
+        }
+        .card {
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <a class="navbar-brand" href="#">Blog Manager</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link" href="/blogs">Manage Blogs</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/categories">Manage Categories</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/blogs/new">Create New Blog</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/categories/new">Create New Category</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/vehicles">List Vehicles</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>   
+
+    <div class="container-fluid">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3">
+                    <h5>Price Range</h5>
+                    <input type="range" id="price" name="price" min="20000" max="100000000" oninput="filterPosts()">
+                    <div>
+                        <h5>Categories</h5>
+                        <% categories.forEach(category => { %>
+                            <div>
+                                <input type="checkbox" id="category_<%= category._id %>" name="category" value="<%= category._id %>" onchange="filterPosts()">
+                                <label for="category_<%= category._id %>"><%= category.name %></label>
+                            </div>
+                        <% }) %>
+                    </div>
+                </div>
+                <div class="col-md-9">
+                    <div id="blog-list" class="row">
+                        <% blogs.forEach(blog => { %>
+                            <div class="col-md-4">
+                                <div class="card">
+                                    <% if (blog.featuredImage) { %>
+                                        <img src="/uploads/<%= blog.featuredImage %>"  class="card-img-top" alt="<%= blog.title %>">
+                                    <% } %>
+                                    <div class="card-body">
+                                        <h5 class="card-title"><%= blog.title %></h5>
+                                        <p class="card-text"><%= blog.categories.map(cat => cat.name).join(', ') %></p>
+                                        <p class="card-text">₹<%= blog.price %></p>
+                                        <a href="/vehicles/<%= blog._id %>" class="btn btn-primary">Read More</a>
+                                    </div>
+                                </div>
+                            </div>
+                        <% }) %>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script>
+        function filterPosts() {
+            const price = document.getElementById('price').value;
+            const categoryElements = document.querySelectorAll('input[name="category"]:checked');
+            const categories = Array.from(categoryElements).map(el =>
+            el.value);
+
+fetch('/vehicles/filter', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ price, categories })
+})
+.then(response => response.text())
+.then(data => {
+    document.getElementById('blog-list').innerHTML = data;
+})
+.catch(error => console.error('Error:', error));
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+document.getElementById('price').addEventListener('input', filterPosts);
+document.querySelectorAll('input[name="category"]').forEach(el => {
+    el.addEventListener('change', filterPosts);
+});
+});
+</script>
+</body>
+</html>

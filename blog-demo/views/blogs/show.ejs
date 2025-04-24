@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        /* Custom CSS */
+        .blog-title {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+        .blog-description {
+            margin-top: 1rem;
+            font-size: 1.1rem;
+        }
+        .blog-price {
+            margin-top: 0.5rem;
+            font-size: 1.2rem;
+            color: #333;
+        }
+        .gallery img {
+            margin: 0.5rem;
+            max-width: 150px;
+            max-height: 150px;
+        }
+        .img-thumbnail {
+            border-radius: 0.25rem;
+        }
+        .btn-primary, .btn-secondary, .btn-danger {
+            margin-right: 0.5rem;
+        }
+    </style>
+    <title><%= blog.title %></title>
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <a class="navbar-brand" href="#">Blog Manager</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link" href="/blogs">Manage Blogs</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/categories">Manage Categories</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/blogs/new">Create New Blog</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/categories/new">Create New Category</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/vehicles">List Vehicles</a></li> <!-- Added this line -->
+                </ul>
+            </div>
+            
+        </nav>
+    </header>
+
+    <div class="container mt-5">
+        <h1 class="blog-title"><%= blog.title %></h1>
+        <p class="blog-description"><%= blog.description %></p>
+        <p class="blog-price">Price: $<%= blog.price %></p>
+        <% if (blog.featuredImage) { %>
+            <img src="/uploads/<%= blog.featuredImage %>" alt="<%= blog.title %>" class="img-fluid" style="max-width: 100%; max-height: 300px;">
+        <% } %>
+        <div class="gallery mt-3">
+            <% blog.additionalImages.forEach(image => { %>
+                <img src="/uploads/<%= image %>" alt="<%= blog.title %>" class="img-thumbnail">
+            <% }) %>
+        </div>
+
+        <p>Categories:
+            <% blog.categories.forEach(category => { %>
+                <span><%= category.name %></span>
+            <% }) %>
+        </p>
+        <a href="/blogs/<%= blog._id %>/edit" class="btn btn-secondary">Edit</a>
+        <form action="/blogs/<%= blog._id %>?_method=DELETE" method="POST" style="display:inline;">
+            <button type="submit" class="btn btn-danger">Delete</button>
+        </form>
+        <a href="/blogs" class="btn btn-primary">Back to Blogs</a>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
